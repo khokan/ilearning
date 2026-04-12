@@ -1,43 +1,42 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { createAuthMiddleware } from "better-auth/api";
 import { prisma } from "./prisma";
-import { oAuthProxy } from "better-auth/plugins";
-// If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "postgresql", // or "mysql", "postgresql", ...etc
-    }),
+  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  trustedOrigins: [process.env.FRONTEND_URL! || "http://localhost:3000"],
 
-    baseURL: process.env.BETTER_AUTH_URL,
-    trustedOrigins: [process.env.FRONTEND_URL!],
-
-    emailAndPassword: {
-      enabled: true,
-    },
-
-    advanced: {
-    cookies: {
-      session_token: {
-        name: "session_token", // Force this exact name
-        attributes: {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          partitioned: true,
-        },
-      },
-      state: {
-        name: "session_token", // Force this exact name
-        attributes: {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          partitioned: true,
-        },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "STUDENT",
+        required: false,
       },
     },
   },
+  
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,               // important so newSession exists
+    requireEmailVerification: false,
+  },
 
-     plugins: [oAuthProxy()],
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      // only after email signup
+      if (ctx.path !== "/sign-up/email") return;
+
+      const newSession = ctx.context.newSession; // exists in after hook :contentReference[oaicite:2]{index=2}
+      const userId = newSession?.user?.id;
+
+      if (!userId) return;
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { emailVerified: true },
+      });
+    }),
+  },
 });

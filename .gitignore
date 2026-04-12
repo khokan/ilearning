@@ -6,3 +6,5 @@ dist
 /generated/prisma
 src/generated/prisma
 prisma/migrations
+.vercel
+api/index.mjs
