@@ -1,55 +1,60 @@
-import { randomUUID } from 'crypto';
-import { hashPassword } from "better-auth/crypto";
-import { prisma } from './prisma';
 
-export async function seedSuperAdmin() {
-    const adminEmail = 'kk@gmail.com';
-    const adminPassword = 'kk123456';
+import { auth } from "../lib/auth";
+import { prisma } from "../lib/prisma";
+import { UserRole } from "../middlewares/auth";
 
-    const passwordHash = await hashPassword(adminPassword);
+const email = process.env.ADMIN_EMAIL;
+const password = process.env.ADMIN_PASSWORD;
 
-    const admin = await prisma.user.upsert({
-        where: { email: adminEmail },
-        create: {
-            id: "111",
-            name: 'Admin',
-            email: adminEmail,
-            password: passwordHash,
-            role: 'ADMIN',
-        },
-        update: {
-            name: 'Admin',
-            password: passwordHash,
-            role: 'ADMIN',
-        },
-    });
+if (!email || !password) {
+  throw new Error("Missing ADMIN_EMAIL or ADMIN_PASSWORD in env");
+}
 
-    const existingAccount = await prisma.account.findFirst({
-        where: {
-            userId: admin.id,
-            providerId: 'credential',
-        },
-    });
+export const seedSuperAdmin = async () => {
+    try {
+        const isSuperAdminExist = await prisma.user.findFirst({
+            where:{
+                role : UserRole.ADMIN
+            }
+        })
 
-    if (existingAccount) {
-        await prisma.account.update({
-            where: { id: existingAccount.id },
-            data: {
-                accountId: admin.id,
-                password: passwordHash,
-            },
+        if(isSuperAdminExist) {
+            console.log("Super admin already exists. Skipping seeding super admin.");
+            return;
+        }
+
+        const superAdminUser = await auth.api.signUpEmail({
+            body:{
+                email : email,
+                password : password,
+                name : "Admin",
+                role : UserRole.ADMIN,
+                rememberMe : false,
+            }
+        })
+
+        await prisma.$transaction(async (tx) => {
+            await tx.user.update({
+                where : {
+                    id : superAdminUser.user.id
+                },
+                data : {
+                    emailVerified : true,
+                }
+            });
+
+                  
+            
         });
-    } else {
-        await prisma.account.create({
-            data: {
-                id: randomUUID(),
-                userId: admin.id,
-                accountId: admin.id,
-                providerId: 'credential',
-                password: passwordHash,
-            },
-        });
+
+    
+
+    } catch (error) {
+        console.error("Error seeding super admin: ", error);
+        await prisma.user.delete({
+            where : {
+                email : email,
+            }
+        })
     }
-
-    console.log('Admin credentials seeded successfully:', admin.email);
 }

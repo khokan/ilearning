@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
+import { planRoutes } from "./app/modules/plans/plan.route";
 
 const app = express();
 
@@ -51,6 +52,8 @@ app.use(express.json());
 
 // Better auth handler
 app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use("/api/plans", planRoutes);
 
 // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
