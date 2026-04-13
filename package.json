@@ -22,6 +22,9 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.0",
   "dependencies": {
+    "genkit": "^1.31.0",
+    "@genkit-ai/google-genai": "^1.31.0",
+    "@genkit-ai/googleai": "^1.28.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "better-auth": "^1.4.18",
