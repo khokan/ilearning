@@ -8,11 +8,12 @@ import { planRoutes } from "./app/modules/plans/plan.route";
 import { subsriptionRotes } from "./app/modules/subscriptions/subscription.route";
 import { userRouter } from "./app/modules/users/users.route";
 import { aiLearnRoutes } from "./app/modules/ailearn/ailearn.route";
+import { PaymentController } from "./app/modules/payment/payment.controller";
 
 const app = express();
 
 
-
+app.post("/webhook", express.raw({ type: "application/json" }), PaymentController.handleStripeWebhookEvent)
 
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000", // client side url
