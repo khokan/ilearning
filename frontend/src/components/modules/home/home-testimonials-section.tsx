@@ -52,8 +52,8 @@ const testimonials: Testimonial[] = [
 
 const getBadgeColor = (type: "student" | "tutor") => {
   return type === "student"
-    ? "bg-success/10 text-success border border-success/30"
-    : "bg-info/10 text-info border border-info/30";
+    ? "bg-secondary/10 text-secondary border border-secondary/30"
+    : "bg-primary/10 text-primary border border-primary/30";
 };
 
 export default function HomeTestimonialsSection() {

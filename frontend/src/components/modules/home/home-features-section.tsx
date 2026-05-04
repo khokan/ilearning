@@ -5,45 +5,43 @@ interface Feature {
   icon: React.ReactNode;
   title: string;
   description: string;
-  color: "primary" | "info" | "success" | "warning";
+  color: "primary" | "secondary";
 }
 
 const features: Feature[] = [
   {
     icon: <Sparkles className="h-8 w-8" />,
-    title: "AI-Powered Learning",
+    title: "Premium quiz access",
     description:
-      "Get personalized learning paths powered by advanced AI technology tailored to your pace and style.",
+      "Unlock AI-generated practice quizzes with every paid subscription and study smarter with plan-based resources.",
     color: "primary",
   },
   {
     icon: <Target className="h-8 w-8" />,
-    title: "Goal Tracking",
+    title: "Secure Stripe payments",
     description:
-      "Set, monitor, and achieve your learning goals with real-time progress tracking and insights.",
-    color: "success",
+      "Subscribe safely with Stripe and manage your billing with confidence.",
+    color: "secondary",
   },
   {
     icon: <Users className="h-8 w-8" />,
-    title: "Expert Community",
+    title: "Progress dashboard",
     description:
-      "Connect with tutors and learners worldwide. Get help when you need it, share knowledge freely.",
-    color: "info",
+      "See your subscription status, quiz history, and plan usage in one clear dashboard designed for learners.",
+    color: "primary",
   },
   {
     icon: <Zap className="h-8 w-8" />,
-    title: "Instant Results",
+    title: "Fast plan upgrades",
     description:
-      "Experience faster learning with interactive lessons, real-time feedback, and adaptive difficulty.",
-    color: "warning",
+      "Move to the next tier quickly when you need more quizzes, deeper practice, or extended premium support.",
+    color: "secondary",
   },
 ];
 
 const colorConfig = {
   primary: "bg-primary/10 text-primary dark:bg-primary/20",
-  success: "bg-success/10 text-success dark:bg-success/20",
-  info: "bg-info/10 text-info dark:bg-info/20",
-  warning: "bg-warning/10 text-warning dark:bg-warning/20",
+  secondary: "bg-secondary/10 text-secondary dark:bg-secondary/20",
 };
 
 export default function HomeFeaturesSection() {

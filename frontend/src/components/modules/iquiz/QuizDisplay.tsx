@@ -189,7 +189,7 @@ export function QuizDisplay({
 
   if (quizState === "start") {
     return (
-      <Card className="mx-6 mb-6">
+      <Card className="mx-6 mb-6 bg-card text-foreground dark:bg-slate-950 dark:text-slate-50">
         <CardHeader>
           <CardTitle>You are about to start a quiz</CardTitle>
           <CardDescription>
@@ -222,7 +222,7 @@ export function QuizDisplay({
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <div className="grid gap-3 rounded-lg border p-4 sm:grid-cols-3">
+          <div className="grid gap-3 rounded-lg border border-border bg-slate-50 p-4 text-slate-950 shadow-sm dark:bg-slate-950/80 dark:text-slate-50">
             <div>
               <p className="text-xs text-muted-foreground">Score</p>
               <p className="text-xl font-semibold">
@@ -246,8 +246,8 @@ export function QuizDisplay({
                 className={cn(
                   "rounded-lg border p-3",
                   item.isCorrect
-                    ? "border-emerald-300 bg-emerald-50"
-                    : "border-rose-300 bg-rose-50"
+                    ? "border-emerald-300 bg-emerald-50 text-slate-950 dark:border-emerald-500 dark:bg-emerald-950/40 dark:text-slate-50"
+                    : "border-rose-300 bg-rose-50 text-slate-950 dark:border-rose-500 dark:bg-rose-950/40 dark:text-slate-50"
                 )}
               >
                 <p className="font-medium">
@@ -274,7 +274,7 @@ export function QuizDisplay({
   }
 
   return (
-    <Card className="mx-6 mb-6">
+    <Card className="mx-6 mb-6 bg-card text-foreground dark:bg-slate-950 dark:text-slate-50">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>
@@ -289,13 +289,13 @@ export function QuizDisplay({
         <progress
           max={100}
           value={Math.max(0, Math.min(progress, 100))}
-          className="mt-2 h-2 w-full"
+          className="mt-2 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800"
           aria-label="Quiz progress"
         />
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <p className="text-lg font-medium">{currentQuestion.question}</p>
+        <p className="text-lg font-medium text-slate-950 dark:text-slate-50">{currentQuestion.question}</p>
 
         <div className="space-y-3">
           {(currentQuestion.type === "mcq"
@@ -309,9 +309,10 @@ export function QuizDisplay({
                 key={`${option}-${index}`}
                 htmlFor={inputId}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-lg border p-4",
-                  userAnswers[currentQuestionIndex] === option &&
-                    "border-primary bg-primary/10"
+                  "flex cursor-pointer items-center gap-3 rounded-lg border p-4 text-slate-950 dark:text-slate-50",
+                  userAnswers[currentQuestionIndex] === option
+                    ? "border-primary bg-primary/10 dark:border-primary/70 dark:bg-primary/10"
+                    : "border-border bg-transparent dark:border-slate-800"
                 )}
               >
                 <input
@@ -322,7 +323,7 @@ export function QuizDisplay({
                   checked={userAnswers[currentQuestionIndex] === option}
                   onChange={() => handleAnswerSelect(option)}
                   aria-label={option}
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-primary"
                 />
                 {option}
               </Label>

@@ -2,13 +2,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { userService } from "@/services/user.service";
-// import { getUserInfo } from "@/services/auth.services";
 
 export default async function HomeCtaSection() {
-  const userInfo = await userService.getSession()
-  if (!userInfo?.data) {
-    return null
-  }
+  const userInfo = await userService.getSession();
 
   return (
     <section className="border-t bg-muted/20 py-24">
@@ -31,7 +27,7 @@ export default async function HomeCtaSection() {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
             {!userInfo?.data ? (
               <>
-                <Button asChild size="lg" className="bg-success hover:bg-success/90">
+                <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
                   <Link href="/register">
                     Get Started Free
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -43,7 +39,7 @@ export default async function HomeCtaSection() {
               </>
             ) : (
               <>
-                <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90">
                   <Link href="/dashboard">
                     Go to Dashboard
                     <ArrowRight className="ml-2 h-5 w-5" />

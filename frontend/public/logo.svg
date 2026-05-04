@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" fill="none">
+  <title id="title">iLearn Brand Mark</title>
+  <desc id="desc">A modern education and AI themed logo with a lowercase i, network nodes, and an open book base.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0ea5e9" />
+      <stop offset="1" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="accent" x1="96" y1="120" x2="416" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38bdf8" />
+      <stop offset="1" stop-color="#60a5fa" />
+    </linearGradient>
+  </defs>
+
+  <rect x="28" y="28" width="456" height="456" rx="112" fill="url(#bg)" />
+
+  <circle cx="256" cy="126" r="34" fill="white" />
+  <rect x="232" y="176" width="48" height="170" rx="24" fill="white" />
+
+  <path d="M164 360C198 338 226 338 256 360C286 338 314 338 348 360" stroke="url(#accent)" stroke-width="18" stroke-linecap="round" />
+  <path d="M142 374C179 342 217 332 256 350C295 332 333 342 370 374" stroke="white" stroke-opacity="0.8" stroke-width="10" stroke-linecap="round" />
+
+  <path d="M162 214L206 214L224 244" stroke="url(#accent)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M350 214L306 214L288 244" stroke="url(#accent)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="206" cy="214" r="8" fill="white" />
+  <circle cx="306" cy="214" r="8" fill="white" />
+
+  <circle cx="172" cy="290" r="6" fill="white" fill-opacity="0.65" />
+  <circle cx="340" cy="290" r="6" fill="white" fill-opacity="0.65" />
+  <circle cx="256" cy="406" r="6" fill="white" fill-opacity="0.65" />
+</svg>
