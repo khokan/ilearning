@@ -20,13 +20,36 @@ async function apiFetch(path: string, init: RequestInit) {
     cache: "no-store",
   });
 
-  const body = await res.json();
+  const responseText = await res.text();
+  const body = responseText
+    ? (() => {
+        try {
+          return JSON.parse(responseText) as Record<string, unknown>;
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+
   if (!res.ok) {
-    throw new Error(body?.message ?? "RAG request failed");
+    const message =
+      (body && typeof body.message === "string" && body.message) ||
+      (body && typeof body.error === "string" && body.error) ||
+      responseText ||
+      "RAG request failed";
+
+    return { error: message };
   }
 
-  return body.data ?? body;
+  return body?.data ?? body ?? {};
 }
+
+export type RagQueryResult = {
+  answer?: unknown;
+  sources?: unknown[];
+  error?: string;
+  [key: string]: unknown;
+};
 
 export async function queryRag(query: string) {
   if (!query || typeof query !== "string") {
@@ -36,12 +59,18 @@ export async function queryRag(query: string) {
   return apiFetch(`/rag/query`, {
     method: "POST",
     body: JSON.stringify({ query, limit: 5 }),
-  });
+  }) as Promise<RagQueryResult>;
 }
 
 export async function ingestSubscriptionData() {
-  return apiFetch(`/rag/ingest`, {
+  const result = await apiFetch(`/rag/ingest`, {
     method: "POST",
     body: JSON.stringify({}),
   });
+
+  if (result && typeof result === "object" && "error" in result) {
+    throw new Error(String(result.error));
+  }
+
+  return result;
 }

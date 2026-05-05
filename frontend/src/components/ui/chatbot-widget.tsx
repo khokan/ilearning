@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, Database, MessageCircle, Sparkles, X } from "lucide-react";
 import { Button } from "./button";
+import { ScrollArea } from "./scroll-area";
 import { Textarea } from "./textarea";
-import { queryRag, ingestSubscriptionData } from "@/actions/rag.actions";
+import { queryRag, ingestSubscriptionData, type RagQueryResult } from "@/actions/rag.actions";
 
 export type ChatbotWidgetProps = {
   userRole?: "ADMIN" | "STUDENT";
@@ -122,7 +123,12 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
     };
 
     try {
-      const result = await queryRag(text.trim());
+      const result = (await queryRag(text.trim())) as RagQueryResult;
+      if (result && typeof result === "object" && "error" in result) {
+        setError(String(result.error));
+        return;
+      }
+
       const responseText = formatAnswer(result?.answer);
 
       const assistantMessage: Message = {
@@ -187,18 +193,18 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
   return (
     <div className="fixed bottom-4 right-4 z-50 flex max-w-sm flex-col items-end">
       <div
-        className={`w-full rounded-3xl border border-border/70 bg-background/95 shadow-2xl backdrop-blur transition-all duration-200 ${
-          isOpen ? "max-h-[80vh]" : "max-h-16"
+        className={`w-full overflow-hidden rounded-3xl border border-border/70 bg-background/95 shadow-2xl shadow-black/10 backdrop-blur transition-all duration-200 dark:bg-card/95 dark:shadow-black/40 ${
+          isOpen ? "h-[80vh]" : "max-h-16"
         }`}
       >
-        <div className="flex items-center justify-between gap-3 rounded-3xl bg-primary px-4 py-3 text-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 rounded-3xl bg-primary px-4 py-3 text-primary-foreground shadow-sm dark:bg-primary dark:text-primary-foreground">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground">
               <MessageCircle className="h-5 w-5" />
             </div>
             <div>
               <p className="text-sm font-semibold">iLearn AI Assistant</p>
-              <p className="text-xs text-primary/80">Role: {roleLabel}</p>
+              <p className="text-xs text-primary-foreground/80">Role: {roleLabel}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -217,7 +223,7 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
             <button
               type="button"
               onClick={() => setIsOpen((open) => !open)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/20"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground transition hover:bg-primary-foreground/20"
               aria-label={isOpen ? "Close assistant" : "Open assistant"}
             >
               {isOpen ? <X className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
@@ -226,30 +232,34 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
         </div>
 
         {isOpen ? (
-          <div className="space-y-3 p-4">
-            <div className="space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`rounded-2xl p-3 shadow-sm ${
-                    message.author === "assistant"
-                      ? "bg-muted/80 text-foreground"
-                      : "bg-primary/10 text-primary"
-                  }`}
-                >
-                  <div className="text-sm leading-6">{message.content}</div>
-                </div>
-              ))}
-            </div>
+          <div className="flex h-[calc(80vh-4.25rem)] min-h-0 flex-col gap-3 p-4">
+            <ScrollArea className="flex-1 min-h-0 pr-3">
+              <div className="space-y-3 pr-2">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`rounded-2xl p-3 shadow-sm ${
+                      message.author === "assistant"
+                        ? "border border-border/60 bg-card text-card-foreground shadow-black/5 dark:border-border/50 dark:bg-card/95 dark:text-card-foreground"
+                        : "bg-primary/10 text-primary dark:bg-primary dark:text-primary-foreground"
+                    }`}
+                  >
+                    <div className="whitespace-pre-wrap wrap-break-word text-sm leading-6 text-inherit">
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
             {syncMessage ? (
-              <div className="rounded-2xl border border-secondary/30 bg-secondary/10 px-3 py-2 text-sm text-secondary">
+              <div className="rounded-2xl border border-secondary/30 bg-secondary/10 px-3 py-2 text-sm text-secondary-foreground dark:bg-secondary/15">
                 {syncMessage}
               </div>
             ) : null}
 
             {error ? (
-              <div className="rounded-2xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <div className="rounded-2xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive dark:bg-destructive/15">
                 {error}
               </div>
             ) : null}
@@ -286,7 +296,7 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
                 </Button>
               </div>
 
-              <div className="rounded-2xl border border-input/70 bg-muted/80 px-3 py-2 text-xs text-muted-foreground">
+              <div className="rounded-2xl border border-input/70 bg-muted/80 px-3 py-2 text-xs text-muted-foreground dark:bg-muted/60">
                 Admin sync is only available to admins. All users can ask questions.
               </div>
             </div>
