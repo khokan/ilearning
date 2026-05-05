@@ -21,8 +21,8 @@ export class LLMService {
     try {
       let fullPrompt =
         context.length > 0
-          ? `Context information:\n${context.join("\n\n")}\n\nQuestion: ${prompt}\n\nAnswer based on the context above.`
-          : prompt;
+          ? `Context information:\n${context.join("\n\n")}\n\nQuestion: ${prompt}\n\nAnswer based on the context above in clear natural language. Do not return JSON or object notation unless explicitly requested.`
+          : `${prompt}\n\nAnswer in clear natural language. Do not return JSON or object notation unless explicitly requested.`;
 
       if (asJson) {
         fullPrompt += `\n\nReturn ONLY a valid JSON object.`;
@@ -30,7 +30,7 @@ export class LLMService {
 
       const systemMessage = asJson
         ? "You are a helpful assistant. Respond ONLY with valid JSON when requested."
-        : "You are a helpful assistant. Answer questions based on the provided context.";
+        : "You are a helpful assistant. Answer questions based on the provided context in clear natural language. Do not return JSON or object notation unless explicitly requested.";
 
       const bodyPayload: any = {
         model: this.model,

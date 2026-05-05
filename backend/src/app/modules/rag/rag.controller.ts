@@ -43,6 +43,7 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
     query,
     limit ?? 5,
     sourceType,
+    true
   );
 
   sendResponse(res, {

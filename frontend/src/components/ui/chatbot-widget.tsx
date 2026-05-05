@@ -61,12 +61,69 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
     setLoading(true);
     setError(null);
 
+    const formatValue = (value: unknown): string => {
+      if (typeof value === "string") return value;
+      if (typeof value === "number" || typeof value === "boolean") return String(value);
+      if (value === null || value === undefined) return "";
+      if (Array.isArray(value)) {
+        return value
+          .map((item) => formatValue(item))
+          .filter(Boolean)
+          .join("; ");
+      }
+      if (typeof value === "object") {
+        return Object.entries(value as Record<string, unknown>)
+          .map(([key, nested]) => `${key}: ${formatValue(nested)}`)
+          .join("; ");
+      }
+      return String(value);
+    };
+
+    const formatObjectAsSentence = (obj: Record<string, unknown>) => {
+      return Object.entries(obj)
+        .map(([key, nested]) => {
+          const label = key.replace(/_/g, " ");
+          const valueText = formatValue(nested);
+          return valueText ? `${label} ${valueText}` : "";
+        })
+        .filter(Boolean)
+        .join("; ");
+    };
+
+    const formatAnswer = (answer: unknown) => {
+      if (typeof answer === "string") {
+        return answer;
+      }
+      if (Array.isArray(answer)) {
+        return answer
+          .map((item) => {
+            if (item && typeof item === "object") {
+              return `• ${formatObjectAsSentence(item as Record<string, unknown>)}`;
+            }
+            return formatValue(item);
+          })
+          .filter(Boolean)
+          .join("\n");
+      }
+      if (answer && typeof answer === "object") {
+        return Object.entries(answer as Record<string, unknown>)
+          .map(([key, value]) => {
+            if (Array.isArray(value) && value.every((item) => item && typeof item === "object")) {
+              return `${key.replace(/_/g, " ")}:\n${(value as unknown[])
+                .map((item) => `  ${formatObjectAsSentence(item as Record<string, unknown>)}`)
+                .join("\n")}`;
+            }
+            return `${key.replace(/_/g, " ")}: ${formatValue(value)}`;
+          })
+          .filter(Boolean)
+          .join("\n\n");
+      }
+      return String(answer ?? "");
+    };
+
     try {
       const result = await queryRag(text.trim());
-      const responseText =
-        typeof result?.answer === "string"
-          ? result.answer
-          : JSON.stringify(result?.answer ?? "", null, 2);
+      const responseText = formatAnswer(result?.answer);
 
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
@@ -94,8 +151,8 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
   };
 
   const handleSync = async () => {
-    if (userRole !== "ADMIN") {
-      setError("Only admins can sync subscription data.");
+    if (userRole !== "ADMIN" && userRole !== "STUDENT") {
+      setError("Only admins and students can sync subscription data.");
       return;
     }
 
@@ -145,7 +202,7 @@ export default function ChatbotWidget({ userRole }: ChatbotWidgetProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {userRole === "ADMIN" ? (
+            {userRole === "ADMIN" || userRole === "STUDENT" ? (
               <Button
                 size="xs"
                 variant="secondary"
