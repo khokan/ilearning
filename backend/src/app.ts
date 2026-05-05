@@ -9,6 +9,7 @@ import { subsriptionRotes } from "./app/modules/subscriptions/subscription.route
 import { userRouter } from "./app/modules/users/users.route";
 import { aiLearnRoutes } from "./app/modules/ailearn/ailearn.route";
 import { PaymentController } from "./app/modules/payment/payment.controller";
+import { RagRoutes } from "./app/modules/rag/rag.route";
 
 const app = express();
 
@@ -64,6 +65,8 @@ app.use("/api/plans", planRoutes);
 app.use("/api/subscriptions", subsriptionRotes);
 
 app.use("/api/users", userRouter);
+
+app.use("/api/rag", RagRoutes);
 
 // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
