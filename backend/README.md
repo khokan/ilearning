@@ -24,6 +24,7 @@
 - Payment processing and webhook handling
 - Role-based access control
 - Premium content access management
+- RAG chatbot query caching with Redis-backed fallback to backend generation
 
 ---
 

@@ -50,6 +50,7 @@ The repository follows a modular, layered backend architecture: middleware → r
 - Premium gated features and access verification in frontend + backend
 - AI-powered quiz generation (Genkit + Google GenAI)
 - RAG-powered knowledge retrieval and assisted responses
+- Redis-backed cache for repeated RAG queries before falling back to backend generation
 
 ---
 
@@ -191,6 +192,7 @@ Key components in this repo
 - Prisma schema for RAG-related persistence: [backend/prisma/schema/rag.prisma](backend/prisma/schema/rag.prisma)
 - Backend module and API surface: [backend/src/app/modules/rag](backend/src/app/modules/rag)
 - Frontend integration points: premium AI pages and support widgets under [frontend/src/app](frontend/src/app)
+- Redis cache client and cache-first query flow in [backend/src/lib/redis.ts](backend/src/lib/redis.ts) and [backend/src/app/modules/rag/rag.controller.ts](backend/src/app/modules/rag/rag.controller.ts)
 
 Typical RAG flow implemented by the project
 1. Ingest: Content is ingested (documents, course content, FAQs) and optionally chunked.
@@ -203,6 +205,7 @@ Configuration and environment
 - Vector database: optionally set up Pinecone, Weaviate, Redis, or a local vector store; configure provider connection in backend env (see `Environment & Configuration` below).
 - Embedding model credentials: configure the embedding provider (OpenAI, Google, etc.) via environment variables.
 - LLM provider credentials: configure model keys for generation in the backend.
+- Redis cache: set `REDIS_URL` in the backend environment to enable cache-first chatbot responses.
 
 Endpoints & usage
 - Indexing endpoint(s) typically live in the backend `rag` module and support: bulk indexing, single-document indexing, and status checks.
