@@ -201,7 +201,11 @@ export default function DashboardSubscriptionPanel({ plans, subscriptions }: Pro
                     <p className="text-sm text-muted-foreground">
                       Status: {sub.status} | Payment: {sub.paymentStatus}
                     </p>
-                  ) : null}
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Status: Not subscribed
+                    </p>
+                  )}
 
                   {isPendingUnpaid ? (
                     <Button

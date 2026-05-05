@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-
-
+import { CheckCircle2, Zap, Users, BarChart3, ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -18,24 +17,43 @@ export default function LoginPage() {
   const sp = useSearchParams();
   const next = sp.get("next") ?? "/dashboard";
 
-  
-
   async function onSubmit(formData: FormData) {
     setLoading(true);
     try {
       const email = String(formData.get("email") ?? "").trim();
       const password = String(formData.get("password") ?? "");
 
-    const { error } = await authClient.signIn.email({ email, password });
+      const { error } = await authClient.signIn.email({ email, password });
 
-     if(error) {
+      if (error) {
         toast.error(`Login failed: ${error.message}`);
         return;
-     }
+      }
       toast.success("Welcome back!");
       router.push(next);
       router.refresh();
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Login failed";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  async function handleDemoLogin(email: string) {
+    setLoading(true);
+    try {
+      const password = "kk123456";
+
+      const { error } = await authClient.signIn.email({ email, password });
+
+      if (error) {
+        toast.error(`Demo login failed: ${error.message}`);
+        return;
+      }
+      toast.success("Welcome back!");
+      router.push(next);
+      router.refresh();
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Login failed";
       toast.error(message);
@@ -45,48 +63,189 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl justify-center px-4 py-14">
-      <Card className="w-full max-w-md rounded-2xl">
-        <CardContent className="p-6">
-          <h1 className="text-2xl font-semibold">Login</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Access your dashboard and subscriptions.</p>
+    <>
+      {/* Main Content */}
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-8">
+            {/* Left Side - Features & Benefits */}
+            <div className="flex flex-col justify-center space-y-8">
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                  Welcome Back
+                </h1>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Access your learning dashboard and continue your journey to success.
+                </p>
+              </div>
 
-          <form action={onSubmit} className="mt-6 space-y-3">
-            <Input name="email" placeholder="Email" type="email" required />
-            <Input name="password" placeholder="Password" type="password" required />
-            <Button className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4 justify-end">
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/register">Create account</Link>
-          </Button>
-        {/* <Button
-          onClick={async () => {
-            setGoogleLoading(true);
-            try {
-              await signInWithGoogle(next);
-            } catch {
-              toast.error("Google sign in failed. Please try again.");
-              setGoogleLoading(false);
-            }
-          }}
-          variant="outline"
-          type="button"
-          disabled={googleLoading}
-          className="w-full"
-        >
-          {googleLoading ? "Redirecting..." : "Continue with Google"}
-        </Button> */}
-      </CardFooter>
-      </Card>
-    </div>
+              {/* Feature Highlights */}
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <div className="shrink-0">
+                    <CheckCircle2 className="h-6 w-6 text-success" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Personalized Learning Paths</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Tailored courses designed for your goals
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="shrink-0">
+                    <Zap className="h-6 w-6 text-warning" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">AI-Powered Quizzes</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Smart assessments to test your knowledge
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="shrink-0">
+                    <Users className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Expert Community</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Learn from instructors and peers
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="shrink-0">
+                    <BarChart3 className="h-6 w-6 text-info" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Progress Analytics</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Track your learning metrics in real-time
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Login Form */}
+            <div className="flex items-center">
+              <Card className="w-full border-2 shadow-lg dark:border-border/50">
+                <CardContent className="p-8">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-bold text-foreground">Sign In</h2>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Enter your credentials to access your account
+                      </p>
+                    </div>
+
+                    <form action={onSubmit} className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-medium text-foreground">
+                          Email Address
+                        </label>
+                        <Input
+                          id="email"
+                          name="email"
+                          placeholder="you@example.com"
+                          type="email"
+                          required
+                          className="h-11 rounded-lg border-2 border-border/50 bg-background px-4 transition-all focus:border-primary/50 focus:shadow-sm"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label htmlFor="password" className="text-sm font-medium text-foreground">
+                            Password
+                          </label>
+                          <Link
+                            href="/forgot-password"
+                            className="text-xs font-medium text-primary hover:underline"
+                          >
+                            Forgot password?
+                          </Link>
+                        </div>
+                        <Input
+                          id="password"
+                          name="password"
+                          placeholder="••••••••"
+                          type="password"
+                          required
+                          className="h-11 rounded-lg border-2 border-border/50 bg-background px-4 transition-all focus:border-primary/50 focus:shadow-sm"
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-lg transition-all hover:shadow-xl disabled:opacity-70"
+                      >
+                        {loading ? (
+                          <span className="flex items-center gap-2">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                            Signing in...
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            Sign In
+                            <ArrowRight className="h-4 w-4" />
+                          </span>
+                        )}
+                      </Button>
+
+                      <div className="mt-3 grid grid-cols-2 gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => handleDemoLogin("kk@gmail.com")}
+                          disabled={loading}
+                          className="h-10"
+                        >
+                          Demo Admin
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => handleDemoLogin("student1@gmail.com")}
+                          disabled={loading}
+                          className="h-10"
+                        >
+                          Demo Student
+                        </Button>
+                      </div>
+                    </form>
+
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border/50" />
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="bg-background px-2 text-muted-foreground">
+                          New to iLearning?
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="border-t border-border/50 bg-muted/30 px-8 py-4">
+                  <Button asChild variant="ghost" className="w-full text-base font-medium">
+                    <Link href="/register">
+                      Create an account
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
+        </div>
+    </>
   );
 }
-
-
 
 export const signInWithGoogle = async (next: string = "/dashboard") => {
   const origin =
