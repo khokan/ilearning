@@ -1,4 +1,4 @@
-# iLearning — Unified Documentation
+# iLearning — a subscription-driven learning platform
 
 This repository contains the iLearning application: a subscription-driven learning platform with a TypeScript/Node backend and a modern Next.js frontend. This document consolidates high-level information from the backend and frontend READMEs and adds an explicit section describing the project's RAG (Retrieval-Augmented Generation) features and configuration.
 
